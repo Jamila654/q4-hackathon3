@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: progress-api
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: progress-api
+  template:
+    metadata:
+      labels:
+        app: progress-api
+    spec:
+      containers:
+      - name: progress-api
+        image: progress-api:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8003
+        env:
+        - name: OPENAI_API_KEY
+          value: "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"
+        - name: DATABASE_URL
+          value: "postgresql://postgres:learnflow123@localhost:5433/learnflow"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: progress-api
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    app: progress-api
+  ports:
+  - port: 8003
+    targetPort: 8003
+    nodePort: 30003
